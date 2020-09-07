@@ -14,6 +14,10 @@ function generateConfig() {
         return {
           API_VERSION: process.env.API_VERSION,
           BASE_URL: process.env.BASE_URL,
+          DATABASE_USERNAME: process.env.POSTGRES_PROD_USERNAME,
+          DATABASE_PASSWORD: process.env.POSTGRES_PROD_PASSWORD,
+          DATABASE: process.env.POSTGRES_PROD_DB,
+          DATABASE_HOST: process.env.POSTGRES_HOST,
           SALT: process.env.SALT,
           SECRET: process.env.SECRET,
           NODE_ENV: process.env.NODE_ENV,
@@ -24,6 +28,10 @@ function generateConfig() {
         return {
           API_VERSION: process.env.API_VERSION,
           BASE_URL: process.env.BASE_URL,
+          DATABASE_USERNAME: process.env.POSTGRES_DEV_USERNAME,
+          DATABASE_PASSWORD: process.env.POSTGRES_DEV_PASSWORD,
+          DATABASE: process.env.POSTGRES_DEV_DB,
+          DATABASE_HOST: process.env.POSTGRES_HOST,
           SALT: process.env.SALT,
           SECRET: process.env.SECRET,
           NODE_ENV: process.env.NODE_ENV,
