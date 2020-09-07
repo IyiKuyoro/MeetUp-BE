@@ -1,6 +1,7 @@
 import { Client } from 'pg';
 
 import config from '../../configs';
+import Logger from '../../helpers/logger';
 
 const client = new Client({
   database: config.DATABASE,
@@ -31,11 +32,11 @@ END $$;
 client
   .query(dropTable)
   .then(() => {
-    console.log('Un-migration successful');
+    Logger.info('Un-migration successful');
     client.end();
     process.exit(0);
   })
-  .catch(e => {
-    console.log(e);
+  .catch((e) => {
+    Logger.error(e);
     process.exit(1);
   });

@@ -3,10 +3,11 @@ import { Client } from 'pg';
 import util from 'util';
 
 import config from '../../configs';
+import Logger from '../../helpers/logger';
 
 const readdir = util.promisify(fs.readdir);
 
-const ssl = config.ENV === 'production' ? true : false;
+const ssl = config.ENV === 'production';
 
 const client = new Client({
   database: config.DATABASE,
@@ -19,12 +20,11 @@ const client = new Client({
 
 client.connect();
 
-const createMetaTable =
-  'CREATE TABLE IF NOT EXISTS meta (migration_id serial PRIMARY KEY, migration_file VARCHAR (50) UNIQUE NOT NULL);';
+const createMetaTable = 'CREATE TABLE IF NOT EXISTS meta (migration_id serial PRIMARY KEY, migration_file VARCHAR (50) UNIQUE NOT NULL);';
 const migratedFiles = [];
 
 const handleErrors = (e) => {
-  console.log(e);
+  Logger.error(e);
   client.end();
   process.exit(1);
 };
@@ -34,7 +34,8 @@ const closeConnection = () => {
   process.exit(0);
 };
 
-// Save the already run migration in the meta table and inform the user then call the next migration or close the connection
+// Save the already run migration in the meta table and inform
+// the user then call the next migration or close the connection
 const successfulMigration = async (files, index, nextMigration) => {
   try {
     const text = 'INSERT INTO meta(migration_file) VALUES($1);';
@@ -45,11 +46,11 @@ const successfulMigration = async (files, index, nextMigration) => {
     });
 
     if (res) {
-      console.log(`${files[index]} migration successfully ran.`);
+      Logger.info(`${files[index]} migration successfully ran.`);
     }
 
     if (index === files.length - 1) {
-      console.log('\nMigrations are up to date!\n');
+      Logger.info('\nMigrations are up to date!\n');
       closeConnection();
     } else {
       nextMigration(files, ++index, nextMigration);
@@ -81,11 +82,11 @@ const executeSQL = (files, index, next) => {
           }
         } else {
           // If no migrations were found
-          console.log('\nMigrations are up to date!\n');
+          Logger.info('\nMigrations are up to date!\n');
           closeConnection();
         }
-      } catch (error) {
-        handleErrors(error);
+      } catch (er) {
+        handleErrors(er);
       }
     },
   );
@@ -101,14 +102,14 @@ const runMigrations = async () => {
     const filteredFiles = files.filter((value) => /.sql$/.test(value));
 
     // Get new files to migrate
-    const newMigrations = filteredFiles.filter(value => {
+    const newMigrations = filteredFiles.filter((value) => {
       const fileName = value.replace(/.[a-z]+$/, '');
-      return -1 === migratedFiles.indexOf(fileName);
+      return migratedFiles.indexOf(fileName) === -1;
     });
 
     // If there are no sql files to run, tell the user
     if (newMigrations.length <= 0) {
-      console.log('There are no migrations to run.');
+      Logger.info('There are no migrations to run.');
       closeConnection();
     }
 

@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run clear && mkdir dist && babel src -d dist",
+    "lint": "eslint src",
+    "migrate": "NODE_ENV=development && node bin/migrate",
     "start": "NODE_ENV=production && node ./bin/prod",
     "start-dev": "NODE_ENV=development && nodemon --legacy-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "node bin/migrate",
-    "unmigrate": "node bin/unMigrate"
+    "unmigrate": "NODE_ENV=development && node bin/unMigrate"
   },
   "author": "Opeoluwa Iyi-Kuyoro",
   "license": "ISC",
@@ -19,11 +20,13 @@
     "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/register": "^7.11.5",
+    "@respondex/apierror": "0.0.1",
     "@respondex/core": "^0.1.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "nodemon": "^2.0.4",
-    "pg": "^8.3.3"
+    "pg": "^8.3.3",
+    "winston": "^3.3.3"
   },
   "nodemonConfig": {
     "legacyWatch": true,
@@ -38,5 +41,10 @@
     ],
     "exec": "node ./bin/dev",
     "ext": "js"
+  },
+  "devDependencies": {
+    "eslint": "^7.8.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0"
   }
 }
